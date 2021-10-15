@@ -1,8 +1,21 @@
-import { LOADING, SUCCESS, FAILURE, SUCCESSFUL_UPDATE, SUCCESSFUL_DELETE, SUCCESSFUL_SELELCTION, RESET_CARDS } from '../actions/index';
+import {
+  LOADING,
+  SUCCESS,
+  FAILURE,
+  SUCCESSFUL_UPDATE,
+  SUCCESSFUL_DELETE,
+  SUCCESSFUL_SELELCTION,
+  RESET_CARDS,
+} from '../actions/index';
 const initState = {
   games: [
-    { id: 1, title: 'monopoly', selected: false },
+    { id: 1, title: 'Free pick1', selected: false },
     { id: 2, title: 'Hand and foot', selected: false },
+    { id: 3, title: 'Phase 10', selected: false },
+    { id: 4, title: 'Sequence', selected: false },
+    { id: 5, title: 'Tionimoes', selected: false },
+    { id: 6, title: 'Blockus', selected: false },
+    { id: 7, title: 'Skip Bo', selected: false },
   ],
   loading: false,
   error: '',
