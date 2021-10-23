@@ -1,108 +1,83 @@
-import {
-  LOADING,
-  SUCCESS,
-  FAILURE,
-  SUCCESSFUL_UPDATE,
-  SUCCESSFUL_DELETE,
-  SUCCESSFUL_SELELCTION,
-  RESET_CARDS,
-} from '../actions/index';
-const initState = {
-  games: [
-    { id: 1, title: 'Free pick1', selected: false },
-    { id: 2, title: 'Hand and foot', selected: false },
-    { id: 3, title: 'Phase 10', selected: false },
-    { id: 4, title: 'Sequence', selected: false },
-    { id: 5, title: 'Tionimoes', selected: false },
-    { id: 6, title: 'Blockus', selected: false },
-    { id: 7, title: 'Skip Bo', selected: false },
-  ],
-  loading: false,
-  error: '',
-};
+import { defaultGames } from 'context/GlobalState';
 
-const rootReducer = (state = initState, action) => {
+export const UPDATE = 'UPDATE';
+export const SUCCESSFUL_ADD = 'SUCCESSFUL_ADD';
+export const SUCCESSFUL_DELETE = 'SUCCESSFUL_DELETE';
+export const SUCCESSFUL_SELECTION = 'SUCCESSFUL_SELECTION';
+export const CARD_SELECTION = 'CARD_SELECTION';
+export const RESET_CARDS = 'RESET_CARDS';
+export const RESET_GAMES = 'RESET_GAMES';
+export const FAILURE = 'FAILURE';
+
+const rootReducer = (state, action) => {
   switch (action.type) {
-    case LOADING:
-      return {
-        ...state,
-        games: [],
-        loading: true,
-      };
+    case SUCCESSFUL_SELECTION:
+      const selectedGames = getSelectedGames(state.games, action.payload);
+      localStorage.setItem('gameNight', JSON.stringify(selectedGames));
+      return selectedGames;
 
-    case SUCCESS:
-      return {
-        ...state,
-        games: action.payload,
-        loading: false,
-        error: '',
-      };
+    case SUCCESSFUL_ADD:
+      const addedGames = getGamesAfterAdd(state.games, action.payload);
+      localStorage.setItem('gameNight', JSON.stringify(addedGames));
+      return addedGames;
+
+    case SUCCESSFUL_DELETE:
+      const gamesAfterDelete = getGamesAfterDelete(state.games, action.payload);
+      localStorage.setItem('gameNight', JSON.stringify(gamesAfterDelete));
+      return gamesAfterDelete;
+
+    case RESET_CARDS:
+      return getResetGames(state.games);
+
+    case RESET_GAMES:
+      return defaultGames;
 
     case FAILURE:
       return {
         ...state,
-        loading: false,
         error: action.payload,
       };
 
-    case SUCCESSFUL_UPDATE:
-      return {
-        ...state,
-        games: getGamesAfterAdd(state.games, action.payload),
-        loading: false,
-        err: '',
-      };
-
-    case SUCCESSFUL_DELETE:
-      const games = getGamesAfterDelete(state.games, action.payload);
-      return {
-        ...state,
-        games: games,
-        loading: false,
-
-        err: '',
-      };
-    case SUCCESSFUL_SELELCTION:
-      const selectedGames = getSelectedGames(state.games, action.payload);
-      return {
-        ...state,
-        games: selectedGames,
-        loading: false,
-        err: '',
-      };
-    case RESET_CARDS:
-      const resetGames = getResetGames(state.games);
-      return {
-        ...state,
-        games: resetGames,
-        loading: false,
-        err: '',
-      };
     default:
       return state;
   }
 };
 
 export function getGamesAfterAdd(games, newGame) {
-  return [...games, ...newGame];
+  return {
+    games: [...games, ...newGame],
+    err: '',
+  };
 }
 
 export function getGamesAfterDelete(games, id) {
-  return games.filter((game) => game.id !== id);
+  const gamesAfterDelete = games.filter((game) => game.id !== id);
+  return {
+    games: gamesAfterDelete,
+    err: '',
+  };
 }
 
 export function getSelectedGames(games, id) {
-  return games.map((game) => {
+  const selectedGames = games.map((game) => {
     if (game.id === id) {
       game.selected = true;
     }
     return game;
   });
+
+  return {
+    games: selectedGames,
+    err: '',
+  };
 }
 
 export function getResetGames(games) {
   games.forEach((game) => (game.selected = false));
-  return games;
+  return {
+    games: games,
+    err: '',
+  };
 }
 
 export default rootReducer;
